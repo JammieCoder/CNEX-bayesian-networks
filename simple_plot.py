@@ -27,8 +27,22 @@ class NetworkPlot:
     def setup(self):
         if self.__data is not None:
             print('Learning Structure...')
+
             self.__sm = from_pandas(self.__data, w_threshold=0.8)
+            self.alter_with_prior()
+        self.__sm = self.__sm.get_largest_subgraph()
         print(f'Edges\n{self.__sm.edges}')
+
+    # Applying Prior knowledge to update the network
+    def alter_with_prior(self):
+        # Since we know that a student pursuing higher education
+        # does not impact the mother education, we remove
+        # this erroneous edge (tabu_edges = excluded edges)
+        self.__sm.remove_edge("higher", "Medu")
+        # More prior knowledge
+        self.__sm.remove_edge("Pstatus", "G1")
+        self.__sm.remove_edge("address", "G1")
+        self.__sm.add_edge("failures", "G1")
 
     def plot(self):
         print('Plotting...')
@@ -36,12 +50,12 @@ class NetworkPlot:
         viz.toggle_physics(self.__fun)
 
         html = viz.generate_html(notebook='01_simple_plot.html')
-        file = 'fully_connected.html'
+        file = 'largest_subgraph.html'
         with open(file, 'w', encoding='utf-8') as f:
             f.write(html)
 
         print('Opening...')
-        print(webbrowser.open(file, 1))
+        print(webbrowser.open(file, 2))
 
 
 # Press the green button in the gutter to run the script.
