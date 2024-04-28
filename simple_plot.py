@@ -2,6 +2,7 @@
 import webbrowser
 from datetime import time
 
+import networkx as nx
 from causalnex.plots import NODE_STYLE, EDGE_STYLE, plot_structure
 from causalnex.structure import StructureModel
 from causalnex.structure.notears import from_pandas
@@ -56,6 +57,12 @@ class NetworkPlot:
 
         print('Opening...')
         print(webbrowser.open(file, 2))
+
+    # StructureModel extends nx.DiGraph so it can be exported as a .dot file
+    def export(self):
+        export_file = 'graph.dot'
+        nx.drawing.nx_pydot.write_dot(self.__sm, export_file)
+        print(f'Exported to {export_file}')
 
 
 # Press the green button in the gutter to run the script.
