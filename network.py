@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import webbrowser
-from datetime import time
 
 import networkx as nx
 from causalnex.plots import NODE_STYLE, EDGE_STYLE, plot_structure
@@ -11,18 +10,21 @@ from causalnex.structure.notears import from_pandas
 # Press Shift+F10 to execute it or replace it with your code.
 # Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
 
-class NetworkPlot:
+class Network:
     __data = None
     __fun = False
     __sm = StructureModel()
     __sm.add_edges_from(
         [('health', 'absences'), ('health', 'G1'), ('absences', 'G1'), ('absences', 'G3'), ('G1', 'G2')])
 
+    # Data: numerical data
     def __init__(self, data=None, fun=False):
         self.__data = data
         self.fun = fun
-
         self.setup()
+
+    def get_sm(self):
+        return self.__sm
 
     # NOTEARS Learns the structure
     def setup(self):
@@ -31,6 +33,7 @@ class NetworkPlot:
 
             self.__sm = from_pandas(self.__data, w_threshold=0.8)
             self.alter_with_prior()
+
         self.__sm = self.__sm.get_largest_subgraph()
         print(f'Edges\n{self.__sm.edges}')
 
@@ -56,7 +59,7 @@ class NetworkPlot:
             f.write(html)
 
         print('Opening...')
-        print(webbrowser.open(file, 2))
+        print(webbrowser.open(file, 0))
 
     # StructureModel extends nx.DiGraph so it can be exported as a .dot file
     def export(self):
@@ -67,5 +70,5 @@ class NetworkPlot:
 
 # Press the green button in the gutter to run the script.
 if __name__ == '__main__':
-    network = NetworkPlot()
+    network = Network()
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
